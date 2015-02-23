@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+#####################################################
+#                                                   #
+# This plugins counts all files in $TICKERS_DIR and #
+# compares it with the number of running pgqd       #
+# instances                                         #
+#                                                   #
+#####################################################
+
+TICKERS_DIR="/var/lib/postgresql/pgq/"
+TOTAL_TICKERS=$(ls $TICKERS_DIR | grep ticker | wc -l)
+NB_TICKERS=$(pgrep pgqd | wc -l | tr -d '\n')
+
+if  [ "$TOTAL_TICKERS" -gt "$NB_TICKERS" ]
+then
+    echo "CRITICAL - $NB_TICKERS tickers running / $TOTAL_TICKERS tickers total"
+    exit 2;
+elif [ "$TOTAL_TICKERS" -eq "$NB_TICKERS" ]
+then
+    echo "OK - $NB_TICKERS tickers running / $TOTAL_TICKERS tickers total"
+    exit 0
+else
+    echo "WARNING - $NB_TICKERS tickers running / $TOTAL_TICKERS tickers total"
+    exit 1
+fi
