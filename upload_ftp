@@ -1,0 +1,18 @@
+#!/bin/bash
+
+HOST="127.0.0.1"
+LOGIN="foo"
+PASSWORD="bar"
+LOCAL_LOG_DIR="/home/foo/logs"
+REMOTE_LOG_DIR="/"
+
+for i in $(ls $LOCAL_LOG_DIR/*.log.gz | cut -d'/' -f 5)
+do
+    ftp -inv $HOST <<EOF
+    user $LOGIN $PASSWORD
+    binary
+    lcd $LOCAL_LOG_DIR
+    put $i
+    quit
+EOF
+done
