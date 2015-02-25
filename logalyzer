@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Simple Apache / varnishncsa log analyzer
+
+# dates are apache format : DD/MM/YYYY:hh:mm ( 22/Feb/2015:22:23 )
+
+if [[ -z $1 || -z $2 || -z $3 ]];
+then
+    echo "Usage : ./logalyzer param file nb_results"
+    exit 1
+fi
+
+if [[ ! -z $3 && ! -z $4 ]];
+then
+    DATE=True
+fi
+
+do_top()
+{
+
+PARAM=$1
+FILE=$2
+RESULTS=$3
+B_DATE=$4
+E_DATE=$5
+
+if [[ $PARAM = "url" ]];
+then
+    PARAM='$7'
+
+elif [[ $PARAM = "ip" ]];
+then
+    PARAM='$1'
+fi
+
+if [[ $DATE == True ]];
+then
+    cat $FILE | grep "$B_DATE\|$E_DATE" | awk '{print '$PARAM'}' | sort -n | uniq -c | sort -nr | head -n $RESULTS
+else
+   cat $FILE | awk '{print '$PARAM'}' | sort -n | uniq -c | sort -nr | head -n $RESULTS
+fi;
+}
+
+if [[ $DATE == True ]];
+then
+    do_top $1 $2 $3 $4 $5
+else
+    do_top $1 $2 $3
+fi
