@@ -6,7 +6,7 @@
 
 if [[ -z $1 || -z $2 || -z $3 ]];
 then
-    echo "Usage : ./logalyzer param file nb_results begin_date end_date"
+    echo "Usage : ./logalyzer param file nb_results [begin_date] [end_date]"
     exit 1
 fi
 
